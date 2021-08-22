@@ -1,0 +1,43 @@
+{
+  "name": "backend-devland",
+  "version": "1.0.0",
+  "description": "DevLand Main Backend Repo",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --harmony index.js",
+    "dev": "nodemon --harmony index.js",
+    "lint": "eslint --ext .js --ignore-path .gitignore .",
+    "lint:fix": "eslint --ext .js . --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DevLand-Network/devland-backend.git"
+  },
+  "author": "Denyncrawford",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DevLand-Network/devland-backend/issues"
+  },
+  "homepage": "https://github.com/DevLand-Network/devland-backend#readme",
+  "dependencies": {
+    "ajv": "^6.12.6",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-favicon": "^2.0.1",
+    "mongodb": "^4.1.0",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.3",
+    "passport": "^0.4.1",
+    "shortid": "^2.2.16"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.1",
+    "nodemon": "^2.0.12",
+    "prettier": "^2.3.2"
+  }
+}
