@@ -12,8 +12,12 @@ In this repo lives the DevLand main API.
 | ------------- | ------------- | ----- |
 | GET  | / | Get API information |
 | GET  | /posts | Get the whole list of posts |
-| GET  | /posts/:postID | Get post by it's id |
+| GET  | /posts/:postID | Get post by its id |
 | POST | /posts | Create a new post |
+| PUT | /posts/:postID | Update Post by its id |
+| DELETE | /posts/:postID | Delete Post by its id |
+
+> Payload documentation is WIP
 
 ## 🛠️ Development
 
@@ -28,7 +32,7 @@ $ npm run dev
 ```
 
 ## 🎎 Contributing
-#### Before commiting on git
+#### Before committing on git
 
 * Get all your linting error (with ESlint)
 ```sh
