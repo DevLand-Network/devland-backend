@@ -60,5 +60,4 @@ $ npm run start
 ```
 
 ## Contributors 🤠
-LucasAlt [Github](https://github.com/LucasCtrl)
-David Niederweis [Github](https://github.com/DJN1)
+Miguel Rangel [Github](https://github.com/denyncrawford)
