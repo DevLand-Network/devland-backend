@@ -7,19 +7,19 @@ import posts from './posts.js'
 
 const router = Router()
 
-import { createRequire } from "module";
-const reqr = createRequire(import.meta.url);
-const packageConfig = reqr("../../package.json");
+import { createRequire } from 'module'
+const reqr = createRequire(import.meta.url)
+const packageConfig = reqr('../../package.json')
 
 router.get('/', (req, res) => {
   // redirects to api docs or send api info
   res.json({
-      name: packageConfig.name,
-      apiVersion: packageConfig.version,
-      repository: packageConfig.repository,
-      description: packageConfig.description,
-      license: packageConfig.license,
-      licenseUrl: packageConfig.licenseUrl,
+    name: packageConfig.name,
+    apiVersion: packageConfig.version,
+    repository: packageConfig.repository,
+    description: packageConfig.description,
+    license: packageConfig.license,
+    licenseUrl: packageConfig.licenseUrl,
   })
 })
 
