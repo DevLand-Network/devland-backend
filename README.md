@@ -30,7 +30,19 @@ In this repo lives the DevLand main API.
 $ npm install
 ```
 
-2. Start the project in dev mode. This command will start a development server.
+2. Set the required variables inside the .env file:
+
+>Please expect this variables to change in the future
+
+```env
+DB_HOST=XXXXXXXXXXXXX
+DB_USER=XXXXXXXXXXXXX
+DB_PASS=XXXXXXXXXXXXX
+DB_NAME=XXXXXXXXXXXXX
+JWT_SECRET=XXXXXXXXXX
+```
+
+3. Start the project in dev mode. This command will start a development server.
 ```sh
 $ npm run dev
 ```
