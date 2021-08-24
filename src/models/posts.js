@@ -18,28 +18,16 @@ const createSchema = {
     },
     description: { type: 'string' },
     shortID: { type: 'string' },
+    visibility: {
+      type: 'string',
+      enum: ['public', 'private', 'unlisted'],
+    },
   },
   required: ['title', 'createdAt', 'updatedAt', 'content', 'shortID'],
   additionalProperties: false,
 }
 
-const updateSchema = {
-  type: 'object',
-  properties: {
-    title: { type: 'string' },
-    updatedAt: {
-      type: 'string',
-    },
-    content: { type: 'string' },
-    tags: {
-      type: 'array',
-      items: { type: 'string' },
-    },
-    description: { type: 'string' },
-  },
-  required: ['updatedAt'],
-  additionalProperties: false,
-}
+const updateSchema = { ...createSchema, required: ['updatedAt'] }
 
 export const validateCreation = ajv.compile(createSchema)
 export const validateUpdate = ajv.compile(updateSchema)

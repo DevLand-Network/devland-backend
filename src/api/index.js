@@ -2,6 +2,8 @@
 
 import { Router } from 'express'
 import posts from './posts.js'
+import users from './users.js'
+import auth from './auth.js'
 
 // declarations section
 
@@ -25,9 +27,12 @@ router.get('/', (req, res) => {
 
 // API main routes
 
+// Authorization routes
+router.use(`/auth`, auth)
 // Posts
 router.use(`/posts`, posts)
 // Users
+router.use(`/users`, users)
 // Media
 // Comments
 // Transactions

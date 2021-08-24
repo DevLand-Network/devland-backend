@@ -1,0 +1,9 @@
+
+# Updates 24/08/2021
+
+- Basic JWT authentication middleware
+- Basic JWT token validation
+- Auth endpoints
+- Basic user management
+- Some security statements declared
+- new user models
