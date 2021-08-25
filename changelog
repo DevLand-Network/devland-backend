@@ -1,4 +1,8 @@
 
+# Updates 25/08/2021
+
+- Stellar SEP 0010 auth implementation (server side)
+
 # Updates 24/08/2021
 
 - Basic JWT authentication middleware

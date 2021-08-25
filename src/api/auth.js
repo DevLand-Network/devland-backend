@@ -11,15 +11,53 @@ import { Router } from 'express'
 import shortid from 'shortid'
 import { getCollection } from '../db/driver.js'
 import commonErrors from '../errors/http.js'
-import { createToken } from '../security/token.js'
+import { createToken, createStellarToken } from '../security/token.js'
 import { validateUserCreation } from '../models/users.js'
 import { checkEmail } from '../utils.js'
+import StellarAuth from 'stellar-auth-server';
+import StellarSDK from 'stellar-sdk'
+const { Keypair } = StellarSDK;
 
-const { internalServerError, forbidden, badRequest, unauthorized } = commonErrors
+const { internalServerError, forbidden, badRequest, unauthorized } = commonErrors;
+
+const serverSecret = process.env.SERVER_SECRET_KEY;
+const serverKeyPair = Keypair.fromSecret(serverSecret);
+const authenticator = new StellarAuth(serverKeyPair)
 
 const router = Router()
 
 // AUTH METHODS
+
+// Auth for Stellar SEP 0010 implementation
+
+router.get('/stellar.json', async (req, res) => {
+  res.json({ 
+    endpoint: `${req.protocol}://${req.get('host')}/auth`,
+    publicKey: serverKeyPair.publicKey()
+  })
+})
+
+router.get('/', async (req, res) => {
+  const { account: clientPublicKey } = req.query;
+  try {
+    const transaction = authenticator.challenge(clientPublicKey);
+    res.json({ transaction });
+  } catch (e) {
+    console.debug(e)
+    return res.status(400).json(badRequest(e.message));
+  }
+})
+
+router.post('/', async (req, res) => {
+  const { transaction } = req.body;
+  try {
+    const { result: { hash, clientPublicKey } } = await authenticator.verify(transaction);
+    const token = createStellarToken(clientPublicKey, hash);
+    res.json({ token });
+  } catch (e) {
+    return res.status(400).json(badRequest(e));
+  }
+})
 
 // Login
 

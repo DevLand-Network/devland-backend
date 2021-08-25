@@ -14,6 +14,14 @@ export const createToken = (user) => {
   })
 }
 
+export const createStellarToken = (publicKey, hash) => {
+  return jwt.sign({
+    publicKey
+  }, hash, {
+    expiresIn: '15d',
+  })
+}
+
 export const secureEndpoint = async (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1]
   if (token) {
