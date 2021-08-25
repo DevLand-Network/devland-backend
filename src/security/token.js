@@ -16,8 +16,9 @@ export const createToken = (user) => {
 
 export const createStellarToken = (publicKey, hash) => {
   return jwt.sign({
+    jwtid: hash,
     publicKey
-  }, hash, {
+  }, jwtSecret, {
     expiresIn: '15d',
   })
 }
