@@ -10,13 +10,15 @@ By now this is centralized proof of concept, in the future we should create a ke
 import { Router } from 'express'
 import shortid from 'shortid'
 import { getCollection } from '../db/driver.js'
-import commonErrors from '../errors/http.js'
+import commonErrors from '../messages/error/http.js'
 import { createToken, createStellarToken } from '../security/token.js'
-import { validateUserCreation } from '../models/users.js'
-import { checkEmail } from '../utils.js'
+import { validateUserCreation, profileData } from '../models/users.js'
+import { checkUsername, createFailMessage } from '../utils.js'
 import StellarAuth from 'stellar-auth-server';
 import StellarSDK from 'stellar-sdk'
 const { Keypair } = StellarSDK;
+import { challenge } from '../middleware/challenge.js'
+import { verify } from '../middleware/verify.js'
 
 const { internalServerError, forbidden, badRequest, unauthorized } = commonErrors;
 
@@ -37,27 +39,9 @@ router.get('/stellar.json', async (req, res) => {
   })
 })
 
-router.get('/', async (req, res) => {
-  const { account: clientPublicKey } = req.query;
-  try {
-    const transaction = authenticator.challenge(clientPublicKey);
-    res.json({ transaction });
-  } catch (e) {
-    console.debug(e)
-    return res.status(400).json(badRequest(e.message));
-  }
-})
+router.get('/', challenge)
 
-router.post('/', async (req, res) => {
-  const { transaction } = req.body;
-  try {
-    const { result: { hash, clientPublicKey } } = await authenticator.verify(transaction);
-    const token = createStellarToken(clientPublicKey, hash);
-    res.json({ token });
-  } catch (e) {
-    return res.status(400).json(badRequest(e));
-  }
-})
+router.post('/', verify)
 
 // Login
 
@@ -84,31 +68,30 @@ router.post('/login', async (req, res) => {
 // Register
 
 router.post('/register', async (req, res) => {
-  const { email, password } = req.body
-  const collection = await getCollection('users')
+  const collection = await getCollection('users');
   try {
     // validations
     const newUser = {
+      shortID: shortid.generate(),
       ...req.body,
       createdAt: new Date().toString(),
       updatedAt: new Date().toString(),
       role: 'user',
-      shortID: shortid.generate(),
+      profileData
     }
 
     if (!validateUserCreation(newUser)) return res.status(400).json(badRequest(validateUserCreation.errors))
-    if (!checkEmail(email)) return res.status(400).json(badRequest('Invalid email'))
+    const check = checkUsername(newUser.username);
+    if (!check.status) return res.status(400).json(badRequest(createFailMessage(check)))
 
-    const user = await collection.findOne({ email })
-    if (user) return res.status(401).json(forbidden('Email already exists'))
+    const user = await collection.findOne({ $or: [{ username: newUser.username }, { publicKey: newUser.publicKey }] })
+    if (user) return res.status(401).json(forbidden('User already exists, please try to login instead.'))
 
     // create user
 
     await collection.insertOne(newUser)
-    const token = createToken({ email, password, shortID: newUser.shortID })
-    res.json({
-      token: token,
-    })
+    //const token = createToken({ email, password, shortID: newUser.shortID })
+    res.json(newUser)
   } catch (err) {
     return res.status(500).json(internalServerError(err))
   }

@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { config as dotenv } from 'dotenv'
-import commonErrors from '../errors/http.js'
+import commonErrors from '../messages/error/http.js'
 
 const { forbidden } = commonErrors
 

@@ -59,4 +59,10 @@ export default {
       message: customMessage || 'Invalid token',
     }
   },
+  accessDenied(customMessage) {
+    return {
+      status: 403,
+      message: customMessage || 'Access denied',
+    }
+  }
 }

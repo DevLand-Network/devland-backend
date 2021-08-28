@@ -3,7 +3,7 @@
 import express from 'express'
 import favicon from 'express-favicon'
 import api from './src/api/index.js'
-import commonErrors from './src/errors/http.js'
+import commonErrors from './src/messages/error/http.js'
 import cors from 'cors'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'

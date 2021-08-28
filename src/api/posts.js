@@ -2,7 +2,7 @@ import { Router } from 'express'
 import shortid from 'shortid'
 import { validateCreation, validateUpdate } from '../models/posts.js'
 import { getCollection } from '../db/driver.js'
-import commonErrors from '../errors/http.js'
+import commonErrors from '../messages/error/http.js'
 
 const { notFound, internalServerError, badRequest } = commonErrors
 

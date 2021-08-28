@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { getCollection } from '../db/driver.js'
-import commonErrors from '../errors/http.js'
+import commonErrors from '../messages/error/http.js'
 import { secureEndpoint } from '../security/token.js'
 
 const { notFound, internalServerError } = commonErrors
