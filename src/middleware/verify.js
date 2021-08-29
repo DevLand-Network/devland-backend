@@ -76,10 +76,7 @@ export const verify = (req, res) => {
 
   console.info(`${op.source} requested token => OK`);
 
-  const token = createStellarToken({
-    publicKey: clientKeyPair.publicKey(),
-    jwtid: tx.hash().toString("hex"),
-  });
+  const token = createStellarToken(clientKeyPair.publicKey(), tx.hash().toString("hex"));
 
   res.json({ token: token });
 };

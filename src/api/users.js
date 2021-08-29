@@ -7,6 +7,18 @@ const { notFound, internalServerError } = commonErrors
 
 const router = Router()
 
+// User Profile
+
+router.get('/profile', secureEndpoint, async (req, res) => {
+  const { user: { publicKey } } = req
+  const collection = await getCollection('users')
+  const userProfile = await collection.findOne({ publicKey })
+  if (!userProfile) {
+    return res.status(404).json(notFound('No user found for this profile'))
+  }
+  return res.json(userProfile)
+})
+
 router.get('/', async (req, res) => {
   const userCol = await getCollection('users')
   try {

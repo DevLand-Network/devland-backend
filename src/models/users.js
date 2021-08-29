@@ -24,39 +24,39 @@ export const validateUserCreation = ajv.compile(newUserSchema)
 
 export const profileData = {
   connections: {
-    quantity: 0,
+    total: 0,
     list: [],
   },
   subscribers: {
-    quantity: 0,
+    total: 0,
     list: [],
   },
   subscriptions: {
-    quantity: 0,
+    total: 0,
     list: [],
   },
   posts: {
-    quantity: 0,
+    total: 0,
     list: [],
   },
   comments: {
-    quantity: 0,
+    total: 0,
     list: [],
   },
   likes: {
-    quantity: 0,
+    total: 0,
     list: [],
   },
   sponsors: {
-    quantity: 0,
+    total: 0,
     list: [],
   },
   courses: {
-    quantity: 0,
+    total: 0,
     list: [],
   },
   groups: {
-    quantity: 0,
+    total: 0,
     list: [],
   },
 }

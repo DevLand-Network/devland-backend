@@ -11,20 +11,19 @@ import { Router } from 'express'
 import shortid from 'shortid'
 import { getCollection } from '../db/driver.js'
 import commonErrors from '../messages/error/http.js'
-import { createToken, createStellarToken } from '../security/token.js'
 import { validateUserCreation, profileData } from '../models/users.js'
 import { checkUsername, createFailMessage } from '../utils.js'
-import StellarAuth from 'stellar-auth-server';
 import StellarSDK from 'stellar-sdk'
 const { Keypair } = StellarSDK;
 import { challenge } from '../middleware/challenge.js'
 import { verify } from '../middleware/verify.js'
+import { verifyToken } from '../security/token.js'
 
 const { internalServerError, forbidden, badRequest, unauthorized } = commonErrors;
 
 const serverSecret = process.env.SERVER_SECRET_KEY;
+const jwtSecret = process.env.JWT_SECRET
 const serverKeyPair = Keypair.fromSecret(serverSecret);
-const authenticator = new StellarAuth(serverKeyPair)
 
 const router = Router()
 
@@ -39,27 +38,25 @@ router.get('/stellar.json', async (req, res) => {
   })
 })
 
+// Challenge generation
+
 router.get('/', challenge)
+
+// Challenge verification
 
 router.post('/', verify)
 
 // Login
 
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body
+  const { publicKey } = req.body
   const collection = await getCollection('users')
   try {
-    const user = await collection.findOne({ email }, { projection: { _id: 0, password: 1, email: 1, shortID: 1 } })
+    const user = await collection.findOne({ publicKey }, { projection: { _id: 0, publicKey: 1, username: 1, shortID: 1 } })
     if (!user) {
-      return res.status(401).json(unauthorized('Invalid password or username'))
+      return res.status(401).json(unauthorized("User doesn't exist, please try to register"))
     }
-    if (user.password !== password) {
-      return res.status(401).json(unauthorized('Invalid password or username'))
-    }
-    const token = createToken(user)
-    res.json({
-      token,
-    })
+    res.json(user)
   } catch (err) {
     return res.status(500).json(internalServerError(err))
   }
@@ -94,6 +91,18 @@ router.post('/register', async (req, res) => {
     res.json(newUser)
   } catch (err) {
     return res.status(500).json(internalServerError(err))
+  }
+})
+
+router.get('/check-session', async (req, res) => {
+  const { token } = req.query
+  if (!token) return res.status(401).json(unauthorized('No token provided'))
+  try {
+    await verifyToken(token)
+    res.json({ valid: true })
+  } catch (err) {
+    console.log(err);
+    res.status(401).json({ valid: false, ...unauthorized(err) })
   }
 })
 
