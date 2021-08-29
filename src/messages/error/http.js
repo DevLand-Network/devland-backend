@@ -64,5 +64,5 @@ export default {
       status: 403,
       message: customMessage || 'Access denied',
     }
-  }
+  },
 }

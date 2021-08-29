@@ -10,7 +10,9 @@ const router = Router()
 // User Profile
 
 router.get('/profile', secureEndpoint, async (req, res) => {
-  const { user: { publicKey } } = req
+  const {
+    user: { publicKey },
+  } = req
   console.log(publicKey)
   const collection = await getCollection('users')
   const userProfile = await collection.findOne({ publicKey })
