@@ -23,7 +23,9 @@
   "homepage": "https://github.com/DevLand-Network/devland-backend#readme",
   "dependencies": {
     "ajv": "^6.12.6",
+    "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
+    "dayjs": "^1.10.6",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-favicon": "^2.0.1",

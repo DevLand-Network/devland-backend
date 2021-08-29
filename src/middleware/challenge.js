@@ -1,18 +1,25 @@
 import crypto from "crypto";
-import { Keypair, Account, TransactionBuilder, Operation, Server, Networks } from "stellar-sdk";
+import {
+  Account,
+  Keypair,
+  Networks,
+  Operation,
+  Server,
+  TransactionBuilder,
+} from "stellar-sdk";
 import commonErrors from "../messages/error/http.js";
 const serverSecret = process.env.SERVER_SECRET_KEY;
 const serverKeyPair = Keypair.fromSecret(serverSecret);
-const invalidSequence = '0';
+const invalidSequence = "0";
 const challengeExpireIn = 3000;
-const HORIZON_URL = "https://horizon-testnet.stellar.org"
+const HORIZON_URL = "https://horizon-testnet.stellar.org";
 
 const server = new Server(HORIZON_URL);
 // Stellar::Account representing the application's account, INVALID_SEQUENCE is used here to make sure this transaction
 // will be invalid if submitted to real network
 const account = new Account(
   serverKeyPair.publicKey(),
-  invalidSequence
+  invalidSequence,
 );
 
 // This random sequence is used to ensure that two challenge transactions generated at the same time will be different.
@@ -26,7 +33,7 @@ export const challenge = async (req, res) => {
   // Public key of the client requesting access.
   const clientPublicKey = req.query.account;
   if (!clientPublicKey) {
-    return res.status(400).send(commonErrors.badRequest('Missing account'));
+    return res.status(400).send(commonErrors.badRequest("Missing account"));
   }
   // Transaction time bounds, current time..+300 seconds by default.
   // In other words, challenge transaction will expire in 5 minutes since it was generated.
@@ -46,15 +53,14 @@ export const challenge = async (req, res) => {
     value: randomNonce(),
   });
   const fee = await server.fetchBaseFee();
-  const tx = new TransactionBuilder(account, { 
-    timebounds, 
+  const tx = new TransactionBuilder(account, {
+    timebounds,
     fee,
-    networkPassphrase: Networks.TESTNET 
+    networkPassphrase: Networks.TESTNET,
   })
     .addOperation(op)
     .build();
   tx.sign(serverKeyPair); // Sign by server
   res.json({ transaction: tx.toEnvelope().toXDR("base64") });
-
   console.info(`${clientPublicKey} requested challenge => OK`);
 };

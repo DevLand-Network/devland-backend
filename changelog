@@ -1,4 +1,9 @@
 
+# Updates 29/08/2021
+
+- Implementation of JWT refresh session with refresh token
+- Auth JWT method refraction
+
 # Updates 25/08/2021
 
 - Stellar SEP 0010 auth implementation (server side)

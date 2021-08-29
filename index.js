@@ -8,14 +8,18 @@ import cors from 'cors'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import morgan from 'morgan'
+import cookieParser from 'cookie-parser'
 
 // Declarations and app configuration:
 
 const __dirname = dirname(fileURLToPath(import.meta.url)) // eslint-disable-line no-use-before-define
 const { notFound } = commonErrors
 
+const secret = process.env.JWT_SECRET
+
 const app = express()
 app.use(express.json())
+app.use(cookieParser(secret))
 app.use(cors())
 app.use(express.static('public'))
 app.use(morgan('combined'))

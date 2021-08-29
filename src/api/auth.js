@@ -1,12 +1,3 @@
-/*
-
-By now this is centralized proof of concept, in the future we should create a key-pair challenge authentication method with the following modules:
-
-  - server-side: https://github.com/dolcalmi/stellar-auth-server
-  - client-side: https://github.com/dolcalmi/stellar-auth-client
-
-*/
-
 import { Router } from 'express'
 import shortid from 'shortid'
 import { getCollection } from '../db/driver.js'
@@ -17,12 +8,11 @@ import StellarSDK from 'stellar-sdk'
 const { Keypair } = StellarSDK;
 import { challenge } from '../middleware/challenge.js'
 import { verify } from '../middleware/verify.js'
-import { verifyToken } from '../security/token.js'
+import { verifyToken, createStellarToken } from '../security/token.js'
 
 const { internalServerError, forbidden, badRequest, unauthorized } = commonErrors;
 
 const serverSecret = process.env.SERVER_SECRET_KEY;
-const jwtSecret = process.env.JWT_SECRET
 const serverKeyPair = Keypair.fromSecret(serverSecret);
 
 const router = Router()
@@ -87,22 +77,22 @@ router.post('/register', async (req, res) => {
     // create user
 
     await collection.insertOne(newUser)
-    //const token = createToken({ email, password, shortID: newUser.shortID })
     res.json(newUser)
   } catch (err) {
     return res.status(500).json(internalServerError(err))
   }
 })
 
-router.get('/check-session', async (req, res) => {
-  const { token } = req.query
-  if (!token) return res.status(401).json(unauthorized('No token provided'))
+router.post('/refresh_token', async (req, res) => {
+  const { refreshToken } = req.cookies;
+  if (!refreshToken) return res.status(401).json(unauthorized('No refresh token found'))
   try {
-    await verifyToken(token)
-    res.json({ valid: true })
+    const { publicKey, hash } = await verifyToken(refreshToken);
+    if (!publicKey || !hash) return res.status(401).json(unauthorized('Invalid refresh token'));
+    const token = createStellarToken(publicKey,  hash);
+    res.send({ token })
   } catch (err) {
-    console.log(err);
-    res.status(401).json({ valid: false, ...unauthorized(err) })
+    return res.status(401).json(err)
   }
 })
 

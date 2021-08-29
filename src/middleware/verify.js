@@ -1,9 +1,10 @@
-import { Keypair, Transaction, Networks } from "stellar-sdk";
+import { Keypair, Networks, Transaction } from "stellar-sdk";
+import dayjs from "dayjs";
 import commonErrors from "../messages/error/http.js";
 const serverSecret = process.env.SERVER_SECRET_KEY;
 const serverKeyPair = Keypair.fromSecret(serverSecret);
-const allowedAccounts = (process.env.ALLOWED_ACCOUNTS || "").split(",");
-import { createStellarToken } from "../security/token.js";
+// const allowedAccounts = (process.env.ALLOWED_ACCOUNTS || "").split(",");
+import { createStellarToken, creatRefreshToken } from "../security/token.js";
 
 const { unauthorized, gatewayTimeout, forbidden } = commonErrors;
 
@@ -28,7 +29,6 @@ export const verify = (req, res) => {
       unauthorized("Server signature is missing or invalid."),
     );
   }
-  
 
   // Challenge transaction is not expired
   if (
@@ -61,7 +61,9 @@ export const verify = (req, res) => {
       clientKeyPair.verify(hash, signature.signature())
     )
   ) {
-    return res.status(403).json(forbidden("Client signature is missing or invalid."));
+    return res.status(403).json(
+      forbidden("Client signature is missing or invalid."),
+    );
   }
 
   // Implement allowed accounts in the future
@@ -76,7 +78,30 @@ export const verify = (req, res) => {
 
   console.info(`${op.source} requested token => OK`);
 
-  const token = createStellarToken(clientKeyPair.publicKey(), tx.hash().toString("hex"));
+  // Create token
 
-  res.json({ token: token });
+  const token = createStellarToken(
+    clientKeyPair.publicKey(),
+    tx.hash().toString("hex"),
+  );
+
+  // Create refresh token
+
+  const refreshExpires = process.env.REFRESH_DURATION || "15d"
+
+  const expires = dayjs().add(refreshExpires.split('d')[0], 'days')
+
+  const refreshToken = creatRefreshToken(
+    clientKeyPair.publicKey(),
+    tx.hash().toString("hex"),
+    refreshExpires
+  );
+
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: true,
+    expires
+  });
+  
+  res.json({ token, expires });
 };

@@ -32,6 +32,7 @@ DB_PASS=XXXXXXXXXXXXX
 DB_NAME=XXXXXXXXXXXXX
 JWT_SECRET=XXXXXXXXXX
 SERVER_SECRET_KEY=XXX
+REFRESH_DURATION=15d
 ```
 
 3. Start the project in dev mode. This command will start a development server.
