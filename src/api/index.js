@@ -29,13 +29,11 @@ router.get('/', (req, res) => {
 
 // Authorization routes
 router.use(`/auth`, auth)
-// Posts
-router.use(`/posts`, posts)
 // Users
 router.use(`/users`, users)
 // Media
 // Comments
-// Transactions
+// Transactions: Transaction automatization
 
 // Export the router
 

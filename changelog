@@ -1,4 +1,12 @@
 
+# Updates 05/09/2021
+
+- Routing posts API to /api/users/:userId/posts
+- Added security schema to the API
+- Updated post schema to include author
+- Fixed bug in refresh token creation (wasn't working with dayjs objects)
+- Documented the new API routing
+
 # Updates 29/08/2021
 
 - Implementation of JWT refresh session with refresh token

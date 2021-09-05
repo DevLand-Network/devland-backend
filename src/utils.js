@@ -24,3 +24,11 @@ export const createFailMessage = (data) => {
   const cleanLastBr = message.replace(/<br>$/, '')
   return cleanLastBr
 }
+
+export const createSlug = (text) => {
+  return text
+    .toLowerCase()
+    .replace(/[^\w ]+/g, '')
+    .replace(/ +/g, '-')
+}
+

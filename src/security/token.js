@@ -39,6 +39,8 @@ export const verifyToken = (token) => {
   })
 }
 
+// Middleware to verify the token
+
 export const secureEndpoint = async (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1]
   if (token) {

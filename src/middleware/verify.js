@@ -72,14 +72,14 @@ export const verify = (req, res) => {
 
   const refreshExpires = process.env.REFRESH_DURATION || '15d'
 
-  const expires = dayjs().add(refreshExpires.split('d')[0], 'days')
+  const expires = dayjs().add(refreshExpires.split('d')[0], 'days').toDate().getTime()
 
   const refreshToken = creatRefreshToken(clientKeyPair.publicKey(), tx.hash().toString('hex'), refreshExpires)
 
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
     secure: true,
-    expires,
+    expires: new Date(expires)
   })
 
   res.json({ token, expires })
