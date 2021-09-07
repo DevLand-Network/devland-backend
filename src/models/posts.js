@@ -1,17 +1,17 @@
-import Ajv from 'ajv'
-const ajv = new Ajv()
+import Ajv from 'ajv';
+const ajv = new Ajv();
 
 const createSchema = {
   type: 'object',
   properties: {
     owner: {
       type: 'string',
-      minLength: 1
+      minLength: 1,
     },
     title: { type: 'string' },
     slug: {
       type: 'string',
-      minLength: 1
+      minLength: 1,
     },
     createdAt: {
       type: 'string',
@@ -39,18 +39,15 @@ const createSchema = {
   },
   required: ['title', 'createdAt', 'updatedAt', 'content', 'shortID', 'owner', 'slug'],
   additionalProperties: false,
-}
+};
 
 const updateSchema = {
   type: 'object',
   properties: {
     title: { type: 'string' },
-    createdAt: {
-      type: 'string',
-    },
     slug: {
       type: 'string',
-      minLength: 1
+      minLength: 1,
     },
     updatedAt: {
       type: 'string',
@@ -73,9 +70,9 @@ const updateSchema = {
       type: 'boolean',
     },
   },
-  required: ['title', 'createdAt', 'updatedAt', 'content', 'shortID', 'owner', 'slug'],
+  required: ['updatedAt'],
   additionalProperties: false,
-}
+};
 
-export const validateCreation = ajv.compile(createSchema)
-export const validateUpdate = ajv.compile(updateSchema)
+export const validateCreation = ajv.compile(createSchema);
+export const validateUpdate = ajv.compile(updateSchema);

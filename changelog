@@ -1,4 +1,15 @@
 
+# Updates 07/09/2021
+
+- Ownership Security implementation based on route and JWT comparison
+- Fixed a bug in the backend where the user was not able to persist sessions
+- Added mergeParams to the routes
+- Added username and userID to the JWT payload on authentication
+- Better error handling for the backend
+- Target user serialization for getting user by any valid identifier (this costs db queries per request, standard for api must be decided)
+- Lint rule added, must include semicolons
+- TODO: Move the whole operation inside try/catch and perform db lookup first
+
 # Updates 05/09/2021
 
 - Routing posts API to /api/users/:userId/posts

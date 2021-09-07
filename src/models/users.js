@@ -1,29 +1,20 @@
-import Ajv from "ajv";
+import Ajv from 'ajv';
 const ajv = new Ajv();
 
 const newUserSchema = {
-  type: "object",
+  type: 'object',
   properties: {
-    shortID: { type: "string" },
-    firstName: { type: "string" },
-    lastName: { type: "string" },
-    username: { type: "string" },
-    publicKey: { type: "string" },
-    createdAt: { type: "string" },
-    updatedAt: { type: "string" },
-    role: { type: "string" },
-    profileData: { type: "object" },
+    shortID: { type: 'string' },
+    firstName: { type: 'string' },
+    lastName: { type: 'string' },
+    username: { type: 'string' },
+    publicKey: { type: 'string' },
+    createdAt: { type: 'string' },
+    updatedAt: { type: 'string' },
+    role: { type: 'string' },
+    profileData: { type: 'object' },
   },
-  required: [
-    "shortID",
-    "firstName",
-    "lastName",
-    "publicKey",
-    "username",
-    "role",
-    "createdAt",
-    "updatedAt",
-  ],
+  required: ['shortID', 'firstName', 'lastName', 'publicKey', 'username', 'role', 'createdAt', 'updatedAt'],
   additionalProperties: false,
 };
 
@@ -33,52 +24,52 @@ export const validateUserCreation = ajv.compile(newUserSchema);
 
 export const profileData = {
   preferences: {
-    lang: "en",
+    lang: 'en',
     visibilityRules: [],
     ads: true,
     notifications: [
       {
-        type: "posts",
+        type: 'posts',
         enabled: true,
       },
       {
-        type: "comments",
+        type: 'comments',
         enabled: true,
       },
       {
-        type: "follows",
+        type: 'follows',
         enabled: true,
       },
       {
-        type: "mentions",
+        type: 'mentions',
         enabled: true,
       },
       {
-        type: "reactions",
+        type: 'reactions',
         enabled: true,
       },
       {
-        type: "replies",
+        type: 'replies',
         enabled: true,
       },
       {
-        type: "likes",
+        type: 'likes',
         enabled: true,
       },
       {
-        type: "shares",
+        type: 'shares',
         enabled: true,
       },
       {
-        type: "reposts",
+        type: 'reposts',
         enabled: true,
       },
       {
-        type: "polls",
+        type: 'polls',
         enabled: true,
       },
       {
-        type: "polls_votes",
+        type: 'polls_votes',
         enabled: true,
       },
     ],
@@ -124,5 +115,5 @@ export const profileData = {
       total: 0,
       list: [],
     },
-  }
+  },
 };

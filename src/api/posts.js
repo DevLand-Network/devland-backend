@@ -1,19 +1,23 @@
-import { Router } from "express";
-import shortid from "shortid";
-import { validateCreation, validateUpdate } from "../models/posts.js";
-import { getCollection } from "../db/driver.js";
-import commonErrors from "../messages/error/http.js";
-import { createSlug } from "../utils.js";
+import { Router } from 'express';
+import shortid from 'shortid';
+import { validateCreation, validateUpdate } from '../models/posts.js';
+import { getCollection } from '../db/driver.js';
+import commonErrors from '../messages/error/http.js';
+import { createSlug } from '../utils.js';
+import { protectedByOwnership } from '../security/ownership.js';
+import { secureEndpoint } from '../security/token.js';
 
 const { notFound, internalServerError, badRequest } = commonErrors;
 
-const router = Router();
+// Important to note that mergeParams is used to get the params from the parent route
 
-// get all posts
+const router = Router({ mergeParams: true });
 
-router.get("/", async (req, res) => {
+// GET /api/posts/ - Get all posts
+
+router.get('/', async (req, res) => {
   const { shortID } = req.user;
-  const postsCol = await getCollection("posts");
+  const postsCol = await getCollection('posts');
   try {
     const posts = await postsCol.find({ owner: shortID }).toArray();
     res.json(posts);
@@ -22,35 +26,35 @@ router.get("/", async (req, res) => {
   }
 });
 
-//get post by id or slug
+// GET /api/posts/:postID - Get post by id or slug from this user
 
-router.get("/:postID", async (req, res) => {
-  const postsCol = await getCollection("posts");
+router.get('/:postID', async (req, res) => {
+  const postsCol = await getCollection('posts');
   const { postID: shortID } = req.params;
-  const { shortID: owner } = req.user;
+  const { shortID: owner } = req.targetUser;
   try {
     const post = await postsCol.findOne({
       $and: [{ $or: [{ shortID }, { slug: shortID }] }, { owner }],
     });
     if (post) return res.json(post);
-    res.status(404).json(notFound("This post doesn\'t exist for this user"));
+    res.status(404).json(notFound("This post doesn't exist for this user"));
   } catch (err) {
     res.status(500).json(internalServerError(err));
   }
 });
 
-// create post
+// POST /api/posts/ - Create a new post for this user
 
-router.post("/", async (req, res) => {
-  const { shortID: owner } = req.user;
-  const postsCol = await getCollection("posts");
+router.post('/', secureEndpoint, protectedByOwnership, async (req, res) => {
+  const { shortID: owner } = req.targetUser;
+  const postsCol = await getCollection('posts');
   const content = {
     ...req.body,
     owner,
     createdAt: new Date().toString(),
     updatedAt: new Date().toString(),
     shortID: shortid.generate(),
-    slug: createSlug(req.body.title) || "",
+    slug: createSlug(req.body.title) || '',
   };
   if (!validateCreation(content)) {
     return res.status(400).json(badRequest(validateCreation.errors));
@@ -69,12 +73,12 @@ router.post("/", async (req, res) => {
   }
 });
 
-// edit post by id or slug
+// PUT /api/posts/:postID - Edit post by id or slug for this user
 
-router.put("/:postID", async (req, res) => {
-  const postsCol = await getCollection("posts");
+router.put('/:postID', secureEndpoint, protectedByOwnership, async (req, res) => {
+  const postsCol = await getCollection('posts');
   const { postID: shortID } = req.params;
-  const { shortID: owner } = req.user;
+  const { shortID: owner } = req.targetUser;
   const content = {
     ...req.body,
     updatedAt: new Date().toString(),
@@ -86,25 +90,25 @@ router.put("/:postID", async (req, res) => {
     const post = await postsCol.findOneAndUpdate(
       { $and: [{ $or: [{ shortID }, { slug: shortID }] }, { owner }] },
       { $set: { ...content } },
-      { returnOriginal: false },
+      { returnOriginal: false }
     );
     if (post.value) return res.json(post.value);
-    res.status(404).json(notFound("This post doesn\'t exist for this user"));
+    res.status(404).json(notFound("This post doesn't exist for this user"));
   } catch (err) {
     res.status(500).json(internalServerError(err));
   }
 });
 
-// delete post by id or slug
+// DELETE /api/posts/:postID - Delete post by id or slug for this user
 
-router.delete("/:postID", async (req, res) => {
-  const postsCol = await getCollection("posts");
+router.delete('/:postID', secureEndpoint, protectedByOwnership, async (req, res) => {
+  const postsCol = await getCollection('posts');
   const { postID: shortID } = req.params;
-  const { shortID: owner } = req.user;
+  const { shortID: owner } = req.targetUser;
   try {
     const post = await postsCol.findOneAndDelete({ $and: [{ $or: [{ shortID }, { slug: shortID }] }, { owner }] });
     if (post.value) return res.json(post.value);
-    res.status(404).json(notFound('This post doesn\'t exist for this user'));
+    res.status(404).json(notFound("This post doesn't exist for this user"));
   } catch (err) {
     res.status(500).json(internalServerError(err));
   }

@@ -4,7 +4,7 @@ import commonErrors from '../messages/error/http.js';
 
 const { forbidden } = commonErrors;
 
-const roles =  {
+const roles = {
   admin: {
     name: 'admin',
     description: 'Administrator',
@@ -24,18 +24,18 @@ const roles =  {
     name: 'guest',
     description: 'Guest',
     permissionLevel: 0,
-  }
-}
+  },
+};
 
 export const roleMiddleware = (req, res, next) => {
-  const { user } = req
+  const { user } = req;
   if (user.role && user.role.permissionLevel >= roles.admin.permissionLevel) {
     next();
   } else {
-    res.status(403).send(forbidden('This key doesn\'t have permission to access this resource.'));
+    res.status(403).send(forbidden("This key doesn't have permission to access this resource."));
   }
-}
+};
 
 export const getRole = (roleName) => {
   return roles[roleName];
-}
+};
