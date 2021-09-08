@@ -41,17 +41,34 @@ $ npm run dev
 ```
 
 ## 🎎 Contributing
-#### Before committing on git
 
-* Get all your linting error (with ESlint)
-```sh
-$ npm run lint
-```
+- **Make your own fork**
 
-* Fix all your linting error automatically (with ESlint)
-```sh
-$ npm run lint:fix
-```
+    Make a fork of this repo and start contributing on your own branch.
+
+- **Always keep up to date with the latest changes**
+
+- **Always commit your changes and include them in the changelog**
+
+    The changelog format is: date as heading and list of changes, always use the same format.
+
+- **Before committing on git**
+
+    * Get all your linting error (with ESlint)
+    ```sh
+    $ npm run lint
+    ```
+
+    * Fix all your linting error automatically (with ESlint)
+    ```sh
+    $ npm run lint:fix
+    ```
+
+    > No linted files won't be merged
+
+- **Git**
+
+    Make the commit and push it to the remote, then if everything is fine, make a PR.
 
 ## 🧦 Tests
 
