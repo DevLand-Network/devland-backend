@@ -1,6 +1,7 @@
 import { getCollection } from '../db/driver.js';
 
 // A middleware that checks if user in request can access this endpoint
+// This middleware won't work if the secureEndpoint is not placed before
 
 export const protectedByOwnership = (req, res, next) => {
   const { shortID: userIdentifier } = req.params;

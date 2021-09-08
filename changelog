@@ -8,6 +8,8 @@
 - Better error handling for the backend
 - Target user serialization for getting user by any valid identifier (this costs db queries per request, standard for api must be decided)
 - Lint rule added, must include semicolons
+- Created contentRulesMiddleware for project content by the user privacy configuration
+- Created the rule engine (projectionEngine, createFilter).
 - TODO: Move the whole operation inside try/catch and perform db lookup first
 
 # Updates 05/09/2021
