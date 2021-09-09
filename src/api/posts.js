@@ -16,7 +16,7 @@ const router = Router({ mergeParams: true });
 // GET /api/posts/ - Get all posts
 
 router.get('/', async (req, res) => {
-  const { shortID } = req.user;
+  const { shortID } = req.targetUser;
   const postsCol = await getCollection('posts');
   try {
     const posts = await postsCol.find({ owner: shortID }).toArray();

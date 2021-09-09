@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { getCollection } from '../db/driver.js';
 import commonErrors from '../messages/error/http.js';
 import { secureEndpoint } from '../security/token.js';
-import { roleMiddleware } from '../security/roles.js';
+import { protectByAccessLevel3 } from '../security/roles.js';
 import { serializeTargetUser } from '../security/ownership.js';
 import posts from './posts.js';
 
@@ -12,7 +12,7 @@ const router = Router();
 
 // GET /api/users - Get all users from the database (admin only)
 
-router.get('/', secureEndpoint, roleMiddleware, async (req, res) => {
+router.get('/', secureEndpoint, protectByAccessLevel3, async (req, res) => {
   const userCol = await getCollection('users');
   try {
     const users = await userCol.find({}).toArray();

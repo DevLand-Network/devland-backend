@@ -9,6 +9,7 @@ const { Keypair } = StellarSDK;
 import { challenge } from '../middleware/challenge.js';
 import { verify } from '../middleware/verify.js';
 import { createStellarToken, verifyToken } from '../security/token.js';
+import { getRole } from '../models/roles.js';
 
 const { internalServerError, forbidden, badRequest, unauthorized } = commonErrors;
 
@@ -48,7 +49,7 @@ router.post('/register', async (req, res) => {
       ...req.body,
       createdAt: new Date().toString(),
       updatedAt: new Date().toString(),
-      role: 'user',
+      role: getRole('user'),
       profileData,
     };
 
@@ -77,19 +78,19 @@ router.post('/register', async (req, res) => {
 });
 
 // POST /auth/refresh_token => Refresh JWT token
+// The refresh token contains the same data as the access token, so we can use it to create a new access token
 
 router.post('/refresh_token', async (req, res) => {
   const { refreshToken } = req.cookies;
-  console.log(refreshToken);
   if (!refreshToken) {
     return res.status(401).json(unauthorized('No refresh token found'));
   }
   try {
-    const { shortID, hash, publicKey, username } = await verifyToken(refreshToken);
+    const { shortID, hash, publicKey, username, role } = await verifyToken(refreshToken);
     if (!publicKey || !hash) {
       return res.status(401).json(unauthorized('Invalid refresh token'));
     }
-    const token = createStellarToken({ shortID, publicKey, username }, hash);
+    const token = createStellarToken({ shortID, publicKey, username, role }, hash);
     res.send({ token });
   } catch (err) {
     return res.status(401).json(err);

@@ -3,8 +3,8 @@
 const projectionEngine = (globPatterns) => {
   const jsonProjection = {};
   globPatterns.forEach((globPattern) => {
-    const path = globPattern.split(".")[0];
-    const paths = path.split("/");
+    const path = globPattern.split('.')[0];
+    const paths = path.split('/');
     let jsonProjectionKey = jsonProjection;
     paths.forEach((path, index) => {
       if (index === paths.length - 1) {
@@ -76,7 +76,7 @@ const createFilter = (jsonProjection) => {
     const keys = Object.keys(content);
     keys.forEach((key) => {
       if (jsonProjection[key] !== 0) {
-        if (typeof jsonProjection[key] === "object") {
+        if (typeof jsonProjection[key] === 'object') {
           // scan all subkeys
           const subKeysProjection = createHideFieldsFilter(jsonProjection[key]);
           contentProjection[key] = subKeysProjection(content[key]);
@@ -96,7 +96,8 @@ const createFilter = (jsonProjection) => {
 // Content rules middleware
 
 export const contentRulesMiddleware = (req, res, next) => {
-  const { content, rules } = req.payload;
+  const { content } = req.payload;
+  const { rules } = content.config;
   if (!rules) {
     return next();
   }

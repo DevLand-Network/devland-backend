@@ -82,6 +82,7 @@ export const verify = async (req, res) => {
           publicKey: 1,
           username: 1,
           shortID: 1,
+          role: 1,
         },
       }
     );
