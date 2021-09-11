@@ -8,8 +8,9 @@ const password = process.env.DB_PASS;
 const dbHost = process.env.DB_HOST;
 const authMechanism = 'DEFAULT';
 const qString = `retryWrites=true&w=majority&authMechanism=${authMechanism}`;
+const protocol = process.env.NODE_ENV === 'production' ? 'mongodb+srv://' : 'mongodb://';
 
-const uri = `mongodb://${username}:${password}@${dbHost}/?${qString}`;
+const uri = `${protocol}${username}:${password}@${dbHost}/?${qString}`;
 
 const client = new MongoClient(uri, {
   useNewUrlParser: true,

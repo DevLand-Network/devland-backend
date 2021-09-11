@@ -89,5 +89,20 @@ $ npm install
 $ npm run start
 ```
 
+## Create super user from the command line
+
+```sh
+$ node --harmony ./createSuperUser.js [options]
+```
+
+```
+Options:
+  
+  - `-u`: username (required)
+  - `-p`: publicKe (required)
+  - `-n`: firstName
+  - `-l`: lastName
+``` 
+
 ## Contributors 🤠
 Miguel Rangel [Github](https://github.com/denyncrawford)

@@ -74,5 +74,7 @@ const updateSchema = {
   additionalProperties: false,
 };
 
+// change to config model standard
+
 export const validateCreation = ajv.compile(createSchema);
 export const validateUpdate = ajv.compile(updateSchema);

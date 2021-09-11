@@ -1,4 +1,14 @@
 
+# Updates 10/09/2021
+
+- SuperUser creation cli
+- Post and user models refactored
+- Added superUser role
+- Content rules now accept array nested data
+- Profile data modeling object is now a function that fills an object with the user data
+- Database uri adapted work in production and development
+
+
 # Updates 08/09/2021
 
 - Role verify implemented on ownership middleware to allow admins to access all resources.

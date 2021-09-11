@@ -1,4 +1,12 @@
+
+import { getCollection } from "../db/driver.js";
+
 export const roles = {
+  superUser: {
+    name: 'Super User',
+    description: 'superUser',
+    permissionLevel: 4,
+  },
   admin: {
     name: 'admin',
     description: 'Administrator',
@@ -28,3 +36,13 @@ export const getRole = (roleName) => {
   }
   return role;
 };
+
+export const createUser = async (user) => {
+  const usersCol = await getCollection('users');
+  const userDoc = await usersCol.findOne({ $or: [{ username: user.username }, { publicKey: user.publicKey }] });
+  if (userDoc) {
+    throw new Error(`User ${user.username} or ${user.publicKey} already exists`);
+  }
+  const superUser = await usersCol.insertOne(user);
+  return superUser;
+}

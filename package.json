@@ -6,10 +6,11 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node --harmony index.js",
-    "dev": "nodemon --harmony index.js",
+    "start": "cross-env NODE_ENV=production node --harmony index.js",
+    "dev": "cross-env NODE_ENV=development nodemon --harmony index.js",
     "lint": "eslint --ext .js --ignore-path .gitignore .",
-    "lint:fix": "eslint --ext .js . --fix"
+    "lint:fix": "eslint --ext .js . --fix",
+    "superuser": "node --harmony createSuperUser.js"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,8 @@
   "homepage": "https://github.com/DevLand-Network/devland-backend#readme",
   "dependencies": {
     "ajv": "^6.12.6",
+    "cli-spinners": "^2.6.0",
+    "commander": "^8.2.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "dayjs": "^1.10.6",
@@ -34,12 +37,14 @@
     "mongodb": "^4.1.0",
     "morgan": "^1.10.0",
     "multer": "^1.4.3",
+    "ora": "^6.0.0",
     "passport": "^0.4.1",
     "shortid": "^2.2.16",
     "stellar-auth-server": "github:denyncrawford/stellar-auth-server",
     "stellar-sdk": "^8.2.5"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.1",
