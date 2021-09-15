@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/DevLand-Network/devland-backend#readme",
   "dependencies": {
+    "@google-cloud/storage": "^5.14.2",
     "ajv": "^6.12.6",
     "cli-spinners": "^2.6.0",
     "commander": "^8.2.0",
@@ -33,6 +34,7 @@
     "express": "^4.17.1",
     "express-favicon": "^2.0.1",
     "jsonwebtoken": "^8.5.1",
+    "mock-aws-s3": "^4.0.2",
     "mongo-project": "^1.0.1",
     "mongodb": "^4.1.0",
     "morgan": "^1.10.0",

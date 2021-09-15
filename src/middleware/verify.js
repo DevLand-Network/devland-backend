@@ -6,7 +6,7 @@ const serverSecret = process.env.SERVER_SECRET_KEY;
 const serverKeyPair = Keypair.fromSecret(serverSecret);
 // const allowedAccounts = (process.env.ALLOWED_ACCOUNTS || "").split(",");
 import { createStellarToken, creatRefreshToken } from '../security/token.js';
-import { getCollection } from '../db/driver.js';
+import { getCollection } from '../storage/database.js';
 
 const { unauthorized, gatewayTimeout, forbidden } = commonErrors;
 dayjs.extend(duration);

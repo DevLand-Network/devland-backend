@@ -3,8 +3,8 @@
 const projectionEngine = (globPatterns) => {
   const jsonProjection = {};
   globPatterns.forEach((globPattern) => {
-    const path = globPattern.split(".")[0];
-    const paths = path.split("/");
+    const path = globPattern.split('.')[0];
+    const paths = path.split('/');
     let jsonProjectionKey = jsonProjection;
     paths.forEach((path, index) => {
       if (index === paths.length - 1) {
@@ -76,25 +76,21 @@ const createFilter = (jsonProjection) => {
     const keys = Object.keys(content);
     keys.forEach((key) => {
       if (jsonProjection[key] !== 0) {
-        if (typeof jsonProjection[key] === "object") {
+        if (typeof jsonProjection[key] === 'object') {
           // scan all subkeys
           if (Array.isArray(content[key])) {
             contentProjection[key] = [];
             content[key].forEach((subKey, i) => {
               if (jsonProjection[key][i] !== 0) {
                 contentProjection[key].push(subKey);
-                if (typeof jsonProjection[key][i] === "object") {
-                  contentProjection[key][i] = createFilter(
-                    jsonProjection[key][i],
-                  )(subKey);
+                if (typeof jsonProjection[key][i] === 'object') {
+                  contentProjection[key][i] = createFilter(jsonProjection[key][i])(subKey);
                 }
               }
             });
           } else {
             contentProjection[key] = {};
-            const subKeysProjection = createFilter(
-              jsonProjection[key],
-            );
+            const subKeysProjection = createFilter(jsonProjection[key]);
             contentProjection[key] = subKeysProjection(content[key]);
           }
         } else {

@@ -1,5 +1,4 @@
-
-import { getCollection } from "../db/driver.js";
+import { getCollection } from '../storage/database.js';
 
 export const roles = {
   superUser: {
@@ -45,4 +44,4 @@ export const createUser = async (user) => {
   }
   const superUser = await usersCol.insertOne(user);
   return superUser;
-}
+};

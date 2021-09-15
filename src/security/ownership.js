@@ -1,4 +1,4 @@
-import { getCollection } from '../db/driver.js';
+import { getCollection } from '../storage/database.js';
 import { roles } from '../models/roles.js';
 import commonErrors from '../messages/error/http.js';
 

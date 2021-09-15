@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { getCollection } from '../db/driver.js';
+import { getCollection } from '../storage/database.js';
 import commonErrors from '../messages/error/http.js';
 import { secureEndpoint } from '../security/token.js';
 import { protectByAccessLevel3 } from '../security/roles.js';
-import { serializeTargetUser } from '../security/ownership.js';
+import { protectedByOwnership, serializeTargetUser } from '../security/ownership.js';
 import posts from './posts.js';
 
 const { notFound, internalServerError } = commonErrors;
@@ -40,7 +40,7 @@ router.get('/profile', secureEndpoint, async (req, res) => {
 
 // Remove secureEndpoint and roleMiddleware from this endpoint just check content rules
 
-router.get('/:shortID', secureEndpoint, async (req, res) => {
+router.get('/:shortID', async (req, res) => {
   const { shortID } = req.params;
   const userCol = await getCollection('users');
   try {
@@ -48,6 +48,23 @@ router.get('/:shortID', secureEndpoint, async (req, res) => {
       $or: [{ shortID }, { publicKey: shortID }, { username: shortID }],
     });
     if (user) return res.json(user);
+    res.status(404).send(notFound('User not found'));
+  } catch (err) {
+    res.status(500).send(internalServerError(err));
+  }
+});
+
+// PATCH /api/users/:id - Update a user in the database (secure, limited by ownership)
+
+router.patch('/:shortID', secureEndpoint, protectedByOwnership, async (req, res) => {
+  const { shortID } = req.params;
+  const { user } = req.body;
+  const userCol = await getCollection('users');
+  try {
+    const updatedUser = await userCol.findOneAndUpdate({ shortID }, { $set: { ...user } }, { returnOriginal: false });
+    if (updatedUser.value) {
+      return res.json(updatedUser.value);
+    }
     res.status(404).send(notFound('User not found'));
   } catch (err) {
     res.status(500).send(internalServerError(err));

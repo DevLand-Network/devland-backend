@@ -1,4 +1,14 @@
 
+# Updates 15/09/2021
+
+- First release of media api
+- Added cloudflare worker to cache media
+- Google Cloud Storage API integration
+- Multer for file uploads
+- Renamed db folder to storage
+- Creation of agnostic bucket driver
+
+
 # Updates 10/09/2021
 
 - SuperUser creation cli

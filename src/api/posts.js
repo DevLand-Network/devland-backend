@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import shortid from 'shortid';
 import { validateCreation, validateUpdate } from '../models/posts.js';
-import { getCollection } from '../db/driver.js';
+import { getCollection } from '../storage/database.js';
 import commonErrors from '../messages/error/http.js';
 import { createSlug } from '../utils.js';
 import { protectedByOwnership } from '../security/ownership.js';
@@ -73,9 +73,9 @@ router.post('/', secureEndpoint, protectedByOwnership, async (req, res) => {
   }
 });
 
-// PUT /api/posts/:postID - Edit post by id or slug for this user
+// PATCH /api/posts/:postID - Edit post by id or slug for this user (granular)
 
-router.put('/:postID', secureEndpoint, protectedByOwnership, async (req, res) => {
+router.patch('/:postID', secureEndpoint, protectedByOwnership, async (req, res) => {
   const postsCol = await getCollection('posts');
   const { postID: shortID } = req.params;
   const { shortID: owner } = req.targetUser;

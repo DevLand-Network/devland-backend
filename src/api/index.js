@@ -1,9 +1,9 @@
 // imports section
 
 import { Router } from 'express';
-import posts from './posts.js';
 import users from './users.js';
 import auth from './auth.js';
+import media from './media.js';
 
 // declarations section
 
@@ -32,6 +32,8 @@ router.use(`/auth`, auth);
 // Users
 router.use(`/users`, users);
 // Media
+router.use('/media', media);
+
 // Comments
 // Transactions: Transaction automatization
 
