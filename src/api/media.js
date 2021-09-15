@@ -2,7 +2,6 @@ import { createUploadStream } from '../storage/bucket.js';
 import { Router } from 'express';
 import Multer from 'multer';
 import commonErrors from '../messages/error/http.js';
-import { Proxy } from 'axios-express-proxy';
 import axios from 'axios';
 
 const multer = Multer({
@@ -14,7 +13,7 @@ const multer = Multer({
 
 const router = Router();
 
-const { badRequest } = commonErrors;
+const { badRequest, notFound, internalServerError } = commonErrors;
 
 // @route   POST api/media/
 
@@ -34,7 +33,7 @@ router.post('/:targetUser', multer.single('file'), async (req, res) => {
       publicUrl,
     });
   } catch (error) {
-    return res.status(500).json(badRequest('Error uploading file'));
+    return res.status(500).json(internalServerError('Error uploading file'));
   }
 });
 
@@ -52,7 +51,7 @@ router.use('/:targetUser', async (req, res) => {
     response.data.pipe(res);
   } catch (error) {
     console.log(error);
-    res.status(404).json(badRequest('File not found'));
+    res.status(404).json(notFound('File not found'));
   }
 });
 export default router;
