@@ -35,6 +35,8 @@ SERVER_SECRET_KEY=XXX
 REFRESH_DURATION=15d
 ```
 
+> serviceAccountKey.json is a file with the credentials for the GCP service account to access the storage bucket (see [here](https://cloud.google.com/storage/docs/authentication)).
+
 3. Start the project in dev mode. This command will start a development server.
 ```sh
 $ npm run dev
