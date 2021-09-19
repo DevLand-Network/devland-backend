@@ -119,3 +119,9 @@ export const contentRulesMiddleware = (req, res, next) => {
   req.payload.content = filter(content);
   return next();
 };
+
+// File content security checks
+
+const admittedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml', 'image/webp'];
+
+export const isMimeTypeAllowed = (mimeType) => admittedMimeTypes.includes(mimeType);

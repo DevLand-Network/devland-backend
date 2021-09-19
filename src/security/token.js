@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { config as dotenv } from 'dotenv';
 import commonErrors from '../messages/error/http.js';
 
-const { forbidden } = commonErrors;
+const { forbidden, unauthorized } = commonErrors;
 
 dotenv();
 
@@ -49,8 +49,8 @@ export const secureEndpoint = async (req, res, next) => {
       req.user = decoded;
       return next();
     } catch (err) {
-      return res.status(401).send(forbidden(err));
+      return res.status(401).send(unauthorized(err));
     }
   }
-  return res.status(401).send(forbidden('Unauthorized'));
+  return res.status(401).send(unauthorized('Unauthorized'));
 };

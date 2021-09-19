@@ -1,6 +1,4 @@
 import { Storage } from '@google-cloud/storage';
-// import fs from "fs";
-// import { promisify } from "util";
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -16,6 +14,8 @@ const storage = new Storage({
 
 const bucket = storage.bucket('devland-staging');
 
+// PUT bucket file
+
 export const putFile = async (fileContent, filename) => {
   const file = bucket.file(filename);
   await file.save(fileContent);
@@ -24,34 +24,39 @@ export const putFile = async (fileContent, filename) => {
   return file;
 };
 
+// Get bucket file
+
 export const deleteFile = async (filename) => {
   const file = bucket.file(filename);
   await file.delete();
 };
+
+// Get bucket file
 
 export const getFile = async (filename) => {
   const file = bucket.file(filename);
   return await file.download();
 };
 
-export const createUploadStream = async (buffer, filename, mimetype) => {
-  const file = bucket.file(filename);
+// Create bucket file by stream
+
+export const createUploadStream = ({ file: fileStream, fullPathName, mimeType }) => {
+  const file = bucket.file(fullPathName);
   const stream = file.createWriteStream({
     metadata: {
-      contentType: mimetype,
+      contentType: mimeType,
     },
     resumable: false,
   });
-  return new Promise((resolve, reject) => {
-    stream.on('error', (err) => {
-      reject(err);
-    });
-    stream.on('finish', async () => {
-      await file.makePublic();
-      resolve(file);
-    });
-    stream.end(buffer);
+  stream.on('error', (err) => {
+    console.log(err);
+    throw err;
   });
+  stream.on('finish', async () => {
+    await file.makePublic();
+  });
+  fileStream.pipe(stream);
+  return file;
 };
 
 // Create a function to test createUploadStream

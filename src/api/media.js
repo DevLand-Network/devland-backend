@@ -1,47 +1,78 @@
-import { createUploadStream } from '../storage/bucket.js';
+import { createUploadStream, deleteFile } from '../storage/bucket.js';
 import { Router } from 'express';
-import Multer from 'multer';
+import Busboy from 'busboy';
 import commonErrors from '../messages/error/http.js';
 import axios from 'axios';
-
-const multer = Multer({
-  storage: Multer.memoryStorage(),
-  limits: {
-    fileSize: 5 * 1024 * 1024, // no larger than 5mb, you can change as needed.
-  },
-});
+import { protectedByOwnership } from '../security/ownership.js';
+import { secureEndpoint } from '../security/token.js';
+import { isMimeTypeAllowed } from '../security/contentRules.js';
 
 const router = Router();
 
 const { badRequest, notFound, internalServerError } = commonErrors;
 
 // @route   POST api/media/
+// To test without authentication: Remove secureEndpoint
 
-router.post('/:targetUser', multer.single('file'), async (req, res) => {
-  const { file } = req;
-  const { targetUser } = req.params;
-  if (!file) return res.status(400).json(badRequest('No file was provided'));
-  const { originalname, mimetype, size, buffer } = file;
-  const fileName = `${targetUser}/${Date.now()}-${originalname}`;
+router.post('/:shortID', secureEndpoint, protectedByOwnership, async (req, res) => {
+  const busboy = new Busboy({
+    headers: req.headers,
+    limits: { fileSize: 10 * 1024 * 1024 },
+  });
+  const { shortID: targetUser } = req.params;
+  let fileUploaded;
+  busboy.on('file', async (filedName, file, filename, encoding, mimeType) => {
+    // Check if mimeType is allowed
+    if (!isMimeTypeAllowed(mimeType)) {
+      return res.status(400).json(badRequest('File type not allowed'));
+    }
+    const uniqueFilename = `${Date.now()}-${filename}`;
+    const fullPathName = `${targetUser}/${uniqueFilename}`;
+    // Try to upload file
+    try {
+      const stream = createUploadStream({ file, fullPathName, mimeType });
+      fileUploaded = stream;
+    } catch (err) {
+      res.status(500).json(internalServerError(err));
+    }
+  });
+  // After uploading file is done
+  busboy.on('finish', () => {
+    if (fileUploaded) {
+      const bucketUrl = `https://storage.googleapis.com/${fileUploaded.bucket.id}/${fileUploaded.name}`;
+      const apiEndpoint = `/api/media/${fileUploaded.name}`;
+      return res.json({
+        bucketUrl,
+        apiEndpoint,
+      });
+    } else {
+      return res.status(400).send(badRequest('No file uploaded'));
+    }
+  });
+  req.pipe(busboy);
+});
+
+// @route   Delete api/media/:shortID/:filename
+
+router.delete('/:shortID/:filename', secureEndpoint, protectedByOwnership, async (req, res) => {
+  const { shortID: targetUser, filename } = req.params;
+  const fullPathName = `${targetUser}/${filename}`;
   try {
-    const success = await createUploadStream(buffer, fileName, mimetype);
-    const bucketUrl = `https://storage.googleapis.com/${success.metadata.bucket}/${success.name}`;
-    const publicUrl = `${req.protocol}://${req.get('host')}/media/${success.name}`;
-    res.json({
-      success: true,
-      bucketUrl,
-      publicUrl,
+    await deleteFile(fullPathName);
+    return res.json({
+      message: 'File deleted',
     });
-  } catch (error) {
-    return res.status(500).json(internalServerError('Error uploading file'));
+  } catch (err) {
+    return res.status(404).json(notFound(err.message));
   }
 });
 
-router.use('/:targetUser', async (req, res) => {
+// @route   GET api/media/:shortID/:filepath
+
+router.use('/:shortID', async (req, res) => {
   const { path } = req;
-  const { targetUser } = req.params;
+  const { shortID: targetUser } = req.params;
   const bucketUrl = `https://media.devland.workers.dev/${targetUser}${path}`;
-  console.log(bucketUrl);
   try {
     const response = await axios.get(bucketUrl, {
       Headers: req.headers,
@@ -54,4 +85,5 @@ router.use('/:targetUser', async (req, res) => {
     res.status(404).json(notFound('File not found'));
   }
 });
+
 export default router;

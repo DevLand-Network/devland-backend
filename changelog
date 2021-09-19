@@ -1,4 +1,12 @@
 
+# Updates 19/09/2021
+
+- Fix caching and headers issue with cloudflare.
+- Delete file method
+- Security integration (ownership)
+- Mime type verification
+- Change from Multer to busboy
+
 # Updates 15/09/2021
 
 - First release of media api
