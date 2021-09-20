@@ -6,6 +6,7 @@
 - Security integration (ownership)
 - Mime type verification
 - Change from Multer to busboy
+- Testing CI pipeline
 
 # Updates 15/09/2021
 
