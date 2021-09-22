@@ -7,6 +7,7 @@
 - Mime type verification
 - Change from Multer to busboy
 - Testing CI pipeline
+- Ci test 2
 
 # Updates 15/09/2021
 
