@@ -43,8 +43,8 @@
     "passport": "^0.4.1",
     "shortid": "^2.2.16",
     "stellar-auth-server": "github:denyncrawford/stellar-auth-server",
-    "stellar-sdk": "^8.2.5"
-    "cross-env": "^7.0.3",
+    "stellar-sdk": "^8.2.5",
+    "cross-env": "^7.0.3"
   },
   "devDependencies": {
     "eslint": "^7.32.0",
