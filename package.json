@@ -1,5 +1,5 @@
 {
-  "name": "DevLand API",
+  "name": "DevLandAPI",
   "version": "1.0.0",
   "description": "DevLand Main Backend Repo",
   "main": "index.js",
