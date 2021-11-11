@@ -15,13 +15,15 @@ import cookieParser from 'cookie-parser';
 const __dirname = dirname(fileURLToPath(import.meta.url)); // eslint-disable-line no-use-before-define
 const { notFound } = commonErrors;
 
+const frontendOrigin = process.env.FRONTEND_URL
+
 const secret = process.env.JWT_SECRET;
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(secret));
-app.use(cors());
+app.use(cors({origin: frontendOrigin, credentials:true}));
 app.use(express.static('public'));
 app.use(morgan('combined'));
 app.use(favicon(__dirname + '/public/favicon-32x32.png'));
