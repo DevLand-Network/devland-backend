@@ -8,7 +8,7 @@ const password = process.env.DB_PASS;
 const dbHost = process.env.DB_HOST;
 const authMechanism = 'DEFAULT';
 const qString = `retryWrites=true&w=majority&authMechanism=${authMechanism}`;
-const protocol = process.env.NODE_ENV === 'production' ? 'mongodb+srv://' : 'mongodb+srv://';
+const protocol = process.env.NODE_ENV === 'production' ? 'mongodb+srv://' : 'mongodb://';
 
 const uri = `${protocol}${username}:${password}@${dbHost}/?${qString}`;
 
